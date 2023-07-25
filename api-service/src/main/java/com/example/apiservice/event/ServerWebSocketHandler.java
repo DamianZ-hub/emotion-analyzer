@@ -43,8 +43,9 @@ public class ServerWebSocketHandler extends TextWebSocketHandler implements SubP
         log.info("Session with id: " + session.getId() + " has been removed");
     }
 
-    @Scheduled(fixedRate = 10000)
+    //@Scheduled(fixedRate = 10000)
     void sendPeriodicMessages() throws IOException {
+        log.info("Number of sessions: {}", sessionStore.getSessions().size());
         for (WebSocketSession session : sessionStore.getSessions().values()) {
             if (session.isOpen()) {
                 String broadcast = "server periodic message " + LocalTime.now();

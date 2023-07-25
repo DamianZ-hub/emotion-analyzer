@@ -11,6 +11,9 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9093,2@kafka2:9093,3@kafka3:9093'
       KAFKA_PROCESS_ROLES: 'broker,controller'
+    ports:
+      - "9092:9092"
+      - "9093:9093"
     volumes:
       - ./run_additionals.sh:/tmp/run_additionals.sh
     command: "bash -c '/tmp/run_additionals.sh && /etc/confluent/docker/run'"
@@ -25,6 +28,9 @@ services:
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9093,2@kafka2:9093,3@kafka3:9093'
       KAFKA_PROCESS_ROLES: 'broker,controller'
+    ports:
+      - "9192:9092"
+      - "9193:9093"
     volumes:
       - ./run_additionals.sh:/tmp/run_additionals.sh
     command: "bash -c '/tmp/run_additionals.sh && /etc/confluent/docker/run'"
@@ -38,7 +44,10 @@ services:
       KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:9092
       KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
       KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka1:9093,2@kafka2:9093,3@kafka3:9093'
-      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFK  A_PROCESS_ROLES: 'broker,controller'
+    ports:
+      - "9292:9092"
+      - "9293:9093"
     volumes:
       - ./run_additionals.sh:/tmp/run_additionals.sh
     command: "bash -c '/tmp/run_additionals.sh && /etc/confluent/docker/run'"

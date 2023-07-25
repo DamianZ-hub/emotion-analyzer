@@ -5,16 +5,20 @@ import com.example.apiservice.data.Response;
 import com.example.apiservice.service.MessageProducer;
 import com.netflix.discovery.EurekaClient;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @NoArgsConstructor
+@Slf4j
 @RequestMapping(path = "/messages")
 public class MessageController {
 
@@ -25,13 +29,23 @@ public class MessageController {
     @Autowired
     private MessageProducer messageProducer;
 
+    @Autowired
+    private SimpUserRegistry simpUserRegistry;
+
     //OAuth 2.0 would be enough for this
     @MessageMapping("/request")
     @SendTo("/topic/responses")
     public Response request(
-            @Payload Request[] request
+            @Payload Request[] request,
+            SimpMessageHeaderAccessor headerAccessor
     ) throws InterruptedException{
         Thread.sleep(2000);
+        String simpSessionId = headerAccessor.getSessionId();
+        String sessionId = headerAccessor.getSessionAttributes().get("sessionId").toString();
+        log.info("SimpSession ID: {}", simpSessionId);
+        log.info("Session ID: {}", sessionId);
+        messageProducer.sendMessage(request[0]);
+
         return Response.builder()
                 .userId(request[0].getUserId())
                 .messageId(request[0].getMessageId())
