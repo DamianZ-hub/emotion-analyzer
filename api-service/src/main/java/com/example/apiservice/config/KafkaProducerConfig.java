@@ -1,8 +1,7 @@
 package com.example.apiservice.config;
 
-import com.example.apiservice.data.Request;
+import com.example.apiservice.data.Message;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,18 +12,16 @@ import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.springframework.messaging.support.GenericMessage;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@EnableAsync
 @EnableKafka
 public class KafkaProducerConfig {
 
-    @Value(value = "${spring.kafka.bootstrap-servers}")
+    @Value(value = "${bootstrap-servers}")
     private String bootstrapAddress;
 
     @Bean
@@ -43,14 +40,15 @@ public class KafkaProducerConfig {
     }
 
     @Bean
-    public ProducerFactory<String, GenericMessage> producerFactory(ObjectMapper objectMapper) {
+    public ProducerFactory<String, Message> producerFactory(ObjectMapper objectMapper) {
         return new DefaultKafkaProducerFactory<>(producerConfiguration(), new StringSerializer(), new JsonSerializer(objectMapper));
     }
 
     @Bean
-    public KafkaTemplate<String, GenericMessage> kafkaTemplate(ObjectMapper objectMapper) {
-        return new KafkaTemplate<String, GenericMessage>(producerFactory(objectMapper));
+    public KafkaTemplate<String, Message> kafkaTemplate(ObjectMapper objectMapper) {
+        return new KafkaTemplate<String, Message>(producerFactory(objectMapper));
     }
+
 
 
 }

@@ -1,6 +1,5 @@
 package com.example.apiservice.data;
 
-
 import lombok.*;
 
 @Getter
@@ -9,9 +8,9 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Builder
-public class Response {
+public class Message {
 
     private String userId;
     private String messageId;
-    private String response;
+    private String content;
 }

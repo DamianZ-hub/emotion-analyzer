@@ -1,4 +1,4 @@
-package com.example.apiservice.data;
+package com.example.processingservice.data;
 
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @EqualsAndHashCode
 @Builder
-public class Request {
+public class Message {
 
     private String userId;
     private String messageId;

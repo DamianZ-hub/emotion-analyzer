@@ -1,16 +1,17 @@
 package com.example.apiservice.controller;
 
-import com.example.apiservice.data.Request;
-import com.example.apiservice.data.Response;
+import com.example.apiservice.data.Message;
+import com.example.apiservice.exceptions.MessageException;
 import com.example.apiservice.service.MessageProducer;
 import com.netflix.discovery.EurekaClient;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.user.SimpUserRegistry;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,25 +33,24 @@ public class MessageController {
     @Autowired
     private SimpUserRegistry simpUserRegistry;
 
+    @Autowired
+    @Qualifier("websocket-source-topic")
+    private NewTopic websocketSourceTopic;
+
     //OAuth 2.0 would be enough for this
     @MessageMapping("/request")
-    @SendTo("/topic/responses")
-    public Response request(
-            @Payload Request[] request,
+    public void sendMessage(
+            @Payload Message[] messages,
             SimpMessageHeaderAccessor headerAccessor
-    ) throws InterruptedException{
-        Thread.sleep(2000);
+    ) throws InterruptedException, MessageException {
+        Thread.sleep(1000);
         String simpSessionId = headerAccessor.getSessionId();
         String sessionId = headerAccessor.getSessionAttributes().get("sessionId").toString();
         log.info("SimpSession ID: {}", simpSessionId);
         log.info("Session ID: {}", sessionId);
-        messageProducer.sendMessage(request[0]);
+        for(Message message : messages)
+            messageProducer.sendMessage(message, websocketSourceTopic.name());
 
-        return Response.builder()
-                .userId(request[0].getUserId())
-                .messageId(request[0].getMessageId())
-                .response("1")
-                .build();
     }
 
 

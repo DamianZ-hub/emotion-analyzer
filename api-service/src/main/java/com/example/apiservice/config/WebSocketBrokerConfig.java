@@ -24,7 +24,7 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer  
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-        registry.enableSimpleBroker("/topic");
+        registry.enableSimpleBroker("/queue");
     }
 
 
@@ -39,5 +39,6 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer  
     public HandshakeInterceptor handshakeInterceptor() {
         return new HttpHandshakeInterceptor();
     }
+
 
 }
