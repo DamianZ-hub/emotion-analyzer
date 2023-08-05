@@ -11,13 +11,11 @@ import java.util.Map;
 public class JsonSerializer<T> implements Serializer<T> {
     private final Gson gson = new GsonBuilder().create();
 
-    // default constructor needed by Kafka
     public JsonSerializer() {
     }
 
     @Override
     public void configure(Map<String, ?> props, boolean isKey) {
-        // nothing to do
     }
 
     @Override
@@ -34,7 +32,6 @@ public class JsonSerializer<T> implements Serializer<T> {
 
     @Override
     public void close() {
-        // nothing to do
     }
 
 }

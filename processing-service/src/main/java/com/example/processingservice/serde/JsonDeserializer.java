@@ -26,7 +26,6 @@ public class JsonDeserializer<T> implements Deserializer<T> {
 
     @Override
     public void configure(Map<String, ?> props, boolean isKey) {
-        // nothing to do
     }
 
     @Override
@@ -44,6 +43,5 @@ public class JsonDeserializer<T> implements Deserializer<T> {
 
     @Override
     public void close() {
-        // nothing to do
     }
 }
