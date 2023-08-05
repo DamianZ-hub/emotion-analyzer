@@ -54,11 +54,5 @@ public class MessageController {
     }
 
 
-//    @GetMapping("/async1")
-//    public CompletableFuture<Map<String, String>> get() {
-//        log.info("get - principal: {}", "a");
-//        return messageProducer.start()
-//                .thenApply(__ -> Map.of("username", principal.getName()));
-//    }
 
 }
