@@ -6,7 +6,7 @@ import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
-@ControllerAdvice
+//@ControllerAdvice
 @Slf4j
 public class ExceptionHandlerController {
 

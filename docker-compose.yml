@@ -25,9 +25,9 @@ services:
       - "9092:9092"
     environment:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
-      KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
       KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
-      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+      KAFKA_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_EXTERNAL
       KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
       KAFKA_BROKER_ID: 1
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -46,3 +46,76 @@ services:
       KAFKA_BROKERCONNECT: "kafka:29092"
     depends_on:
       - "kafka"
+
+  rabbitmq:
+    build: rabbitmq
+    labels:
+      kompose.service.type: nodeport
+    ports:
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+    networks:
+      - kafka-net
+
+  eureka:
+    build: ./discovery-service
+    ports:
+      - '8761:8761'
+    networks:
+      - kafka-net
+
+  gateway:
+      build: ./api-gateway
+      ports:
+        - '8080:8080'
+      depends_on:
+        - eureka
+      environment:
+        - EUREKA_URI=http://eureka:8761/eureka
+      networks:
+        - kafka-net
+
+  websocket-server-1:
+      build: ./api-service
+      depends_on:
+        - eureka
+        - rabbitmq
+        - kafka
+      environment:
+        - EUREKA_URI=http://eureka:8761/eureka
+        - BROKER_RELAY_HOST=rabbitmq
+        - BOOTSTRAP_SERVER = kafka:29092
+      networks:
+        - kafka-net
+
+
+  websocket-server-2:
+      build: ./api-service
+      depends_on:
+        - eureka
+        - rabbitmq
+        - kafka
+      environment:
+        - EUREKA_URI=http://eureka:8761/eureka
+        - BROKER_RELAY_HOST=rabbitmq
+        - BOOTSTRAP_SERVER = kafka:29092
+      networks:
+        - kafka-net
+
+  processing-server:
+        build: ./processing-service
+        depends_on:
+          - eureka
+          - rabbitmq
+          - kafka
+          - websocket-server-1
+          - websocket-server-2
+        environment:
+          - BOOTSTRAP_SERVER = kafka:29092
+        networks:
+          - kafka-net
+
+volumes:
+  rabbitmq_data:
+    driver: local

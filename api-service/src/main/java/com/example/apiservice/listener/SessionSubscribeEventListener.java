@@ -14,8 +14,8 @@ public class SessionSubscribeEventListener implements ApplicationListener<Sessio
     public void onApplicationEvent(SessionSubscribeEvent event) {
 
             StompHeaderAccessor headerAccessor = StompHeaderAccessor.wrap(event.getMessage());
-            System.out.println(headerAccessor.getSessionAttributes().get("sessionId").toString());
-            log.info("Session subscribed: {}", event);
+            //System.out.println(headerAccessor.getSessionAttributes().get("sessionId").toString());
+            //log.info("Session subscribed: {}", event);
 
     }
 }

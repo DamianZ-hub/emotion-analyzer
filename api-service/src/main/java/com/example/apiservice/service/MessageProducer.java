@@ -29,7 +29,7 @@ public class MessageProducer {
         this.simpMessagingTemplate = simpMessagingTemplate;
     }
 
-    @Async
+    //@Async
     public void sendMessage(Message message, String topicName) throws MessageException {
 
 

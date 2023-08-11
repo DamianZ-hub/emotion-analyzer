@@ -3,10 +3,13 @@ package com.example.apiservice.controller;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.oauth2.server.resource.authentication.BearerTokenAuthentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
+import reactor.core.publisher.Mono;
 
+import java.security.Principal;
 import java.util.Map;
 
 @RestController
@@ -41,5 +44,16 @@ public class UtilsController {
         );
     }
 
+
+   @GetMapping("/user")
+    public String index(Principal principal) {
+        return principal.getName();
+    }
+
+    @GetMapping("/test")
+    public Mono<String> test(Principal principal, BearerTokenAuthentication auth) {
+
+        return Mono.just("test");
+    }
 
 }
