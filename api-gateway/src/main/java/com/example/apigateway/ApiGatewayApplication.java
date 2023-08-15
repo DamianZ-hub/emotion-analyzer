@@ -7,7 +7,6 @@ import org.springframework.security.config.annotation.web.reactive.EnableWebFlux
 
 @SpringBootApplication
 @EnableDiscoveryClient
-@EnableWebFluxSecurity
 public class ApiGatewayApplication {
 
 	public static void main(String[] args) {

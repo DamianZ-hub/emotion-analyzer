@@ -2,6 +2,7 @@ package com.example.apiservice.config;
 
 import com.example.apiservice.interceptor.HttpHandshakeInterceptor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,16 +21,16 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer  
     @Value("${broker.relay.host}")
     private String brokerRelayHost;
 
+
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-//        registry
-//                .addEndpoint("/ws")
-//                .addInterceptors(handshakeInterceptor())
-//                .withSockJS();
+
         registry.addEndpoint("/ws")
-                .setAllowedOrigins("*");
+                .setAllowedOrigins("*")
+                .addInterceptors(getHandshakeInterceptor());
         registry.addEndpoint("/sockjs")
                 .setAllowedOrigins("*")
+                .addInterceptors(getHandshakeInterceptor())
                 .withSockJS();
 
     }
@@ -37,7 +38,6 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer  
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
         registry.setApplicationDestinationPrefixes("/app");
-        //registry.enableSimpleBroker("/queue");
         registry.enableStompBrokerRelay("/queue", "/topic")
                 .setRelayHost(brokerRelayHost);
     }
@@ -46,30 +46,15 @@ public class WebSocketBrokerConfig implements WebSocketMessageBrokerConfigurer  
 
     @Override
     public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
-        registration.setMessageSizeLimit(8192);
-        registration.setSendBufferSizeLimit(8192);
+//        registration.setMessageSizeLimit(8192);
+//        registration.setSendBufferSizeLimit(8192);
+        registration.setMessageSizeLimit(18192);
+        registration.setSendBufferSizeLimit(18192);
     }
 
     @Bean
-    public HandshakeInterceptor handshakeInterceptor() {
+    public HandshakeInterceptor getHandshakeInterceptor() {
         return new HttpHandshakeInterceptor();
     }
-
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        registration.interceptors(new ChannelInterceptor() {
-//            @Override
-//            public Message<?> preSend(Message<?> message, MessageChannel channel) {
-//                StompHeaderAccessor accessor =
-//                        MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
-//                if (StompCommand.CONNECT.equals(accessor.getCommand())) {
-//                    List<String> authorization = accessor.getNativeHeader("X-Authorization");
-//                    log.debug("X-Authorization: {}", authorization);
-//
-//                }
-//                return message;
-//            }
-//        });
-//    }
 
 }
